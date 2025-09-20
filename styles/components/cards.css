@@ -1,0 +1,50 @@
+.card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 18px;
+  margin-bottom: 18px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+}
+
+.card:hover {
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+}
+
+.stat-box {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 16px;
+  text-align: center;
+  box-shadow: var(--shadow);
+}
+
+.stat-value {
+  font-size: 20px;
+  font-weight: 700;
+  margin: 6px 0;
+  color: var(--primary);
+}
+
+.stat-label {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+.trip-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border-left: 4px solid var(--primary);
+}
+
+.settlement-card {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 16px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border-top: 4px solid var(--success);
+}

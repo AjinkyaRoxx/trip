@@ -1,0 +1,30 @@
+/* Helper classes */
+.muted {
+  color: var(--gray);
+  font-size: 13px;
+}
+
+.balance-positive {
+  color: #2ecc71;
+  font-weight: 500;
+}
+
+.balance-negative {
+  color: var(--danger);
+  font-weight: 500;
+}
+
+.spinner {
+  border: 3px solid var(--gray-light);
+  border-top: 3px solid var(--primary);
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  animation: spin 1s linear infinite;
+  margin: 20px auto;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
