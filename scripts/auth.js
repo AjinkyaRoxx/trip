@@ -5,7 +5,9 @@ const SUPABASE_URL = 'https://vydqnginpfmbufpboqgb.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ5ZHFuZ2lucGZtYnVmcGJvcWdiIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTgyNzg5MjQsImV4cCI6MjA3Mzg1NDkyNH0.wi8vjgmYgbcxfLyplZ2yDeeWQatoIcTIBIjg0PpvzKM';
 
 // ✅ Correct Supabase client initialization
-export const supabase = window.supabase?.createClient?.(SUPABASE_URL, SUPABASE_KEY);
+import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/+esm';
+export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+
 
 // ✅ Fallback: log if Supabase is not initialized
 if (!supabase) {
@@ -75,3 +77,4 @@ export async function logout() {
     return false;
   }
 }
+
