@@ -241,4 +241,16 @@ function handleAmountChange() {
 }
 
 function handleSplitInput() {
-  UI.updateSplitSummary
+  UI.updateSplitSummary("splitSummary", "expAmt", "splitRows", state[currentTripId].participants);
+}
+
+// Placeholder for modal expense editing
+function handleAddExpense() {}
+function handleEditSplitTypeChange() {}
+function handleEditAmountChange() {}
+function handleEditSplitInput() {}
+function handleSaveExpense() {}
+function closeEditExpenseModal() {}
+
+// Start the app
+init();
