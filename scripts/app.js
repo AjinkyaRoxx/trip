@@ -18,57 +18,47 @@ let state = {
 
 // Initialize the app
 function init() {
-  // Set today's date as default for expense date
   const today = new Date().toISOString().split('T')[0];
   document.getElementById("expDate").value = today;
   document.getElementById("editExpDate").value = today;
-  
-  // Check if user is already logged in
+
   supabase.auth.getSession().then(({ data: { session } }) => {
     if (session) {
       currentUser = session.user;
       UI.showAppUI();
-      loadUserData();
+      loadAndRenderUserData();
     } else {
       UI.showLoginUI();
     }
   });
-  
-  // Listen for auth changes
+
   supabase.auth.onAuthStateChange((event, session) => {
     if (event === 'SIGNED_IN' && session) {
       currentUser = session.user;
       UI.showAppUI();
-      loadUserData();
+      loadAndRenderUserData();
     } else if (event === 'SIGNED_OUT') {
       currentUser = null;
       UI.showLoginUI();
     }
   });
-  
-  // Set up event listeners
+
   setupEventListeners();
   UI.setupTabNavigation();
 }
 
-// Load user data
+// Load user data and refresh UI
 async function loadAndRenderUserData() {
   if (!currentUser) return;
-
-  const userData = await loadUserData(currentUser.id); // this uses the imported function
+  const userData = await loadUserData(currentUser.id);
   state = userData;
   refreshUI();
 }
 
-// Refresh all UI components
 function refreshUI() {
-  // Refresh trip selection
   currentTripId = UI.refreshTripSelect(state.trips, currentTripId, handleTripChange);
-  
-  // Refresh trips UI
   UI.refreshTripsUI(state.trips, handleTripSelect);
-  
-  // Refresh current trip data if available
+
   if (currentTripId && state[currentTripId]) {
     const currentTrip = state[currentTripId];
     UI.refreshParticipantsUI(currentTrip.participants);
@@ -79,13 +69,11 @@ function refreshUI() {
   }
 }
 
-// Handle trip change
 function handleTripChange(tripId) {
   currentTripId = tripId;
   refreshUI();
 }
 
-// Handle trip selection from the trips list
 function handleTripSelect(tripId) {
   currentTripId = tripId;
   document.getElementById('tripSelect').value = tripId;
@@ -96,9 +84,7 @@ function handleTripSelect(tripId) {
   refreshUI();
 }
 
-// Set up event listeners
 function setupEventListeners() {
-  // Authentication
   document.getElementById("loginBtn").addEventListener("click", handleLogin);
   document.getElementById("registerBtn").addEventListener("click", handleRegister);
   document.getElementById("showRegister").addEventListener("click", (e) => {
@@ -110,29 +96,20 @@ function setupEventListeners() {
     UI.showLoginForm();
   });
   document.getElementById("logoutBtn").addEventListener("click", handleLogout);
-  
-  // Trips
   document.getElementById("addTripBtn").addEventListener("click", handleAddTrip);
   document.getElementById("deleteTripBtn").addEventListener("click", handleDeleteTrip);
-  
-  // Participants
   document.getElementById("addParticipantBtn").addEventListener("click", handleAddParticipant);
-  
-  // Expenses
   document.getElementById("expSplitType").addEventListener("change", handleSplitTypeChange);
   document.getElementById("expAmt").addEventListener("input", handleAmountChange);
   document.getElementById("splitRows").addEventListener("input", handleSplitInput);
   document.getElementById("addExpenseBtn").addEventListener("click", handleAddExpense);
-  
-  // Modal events
   document.getElementById("editExpSplitType").addEventListener("change", handleEditSplitTypeChange);
   document.getElementById("editExpAmt").addEventListener("input", handleEditAmountChange);
   document.getElementById("editSplitRows").addEventListener("input", handleEditSplitInput);
   document.getElementById("saveExpenseBtn").addEventListener("click", handleSaveExpense);
   document.getElementById("closeModalBtn").addEventListener("click", closeEditExpenseModal);
   document.querySelector(".modal-close").addEventListener("click", closeEditExpenseModal);
-  
-  // Close modal when clicking outside
+
   window.addEventListener("click", (event) => {
     const modal = document.getElementById("editExpenseModal");
     if (event.target === modal) {
@@ -141,13 +118,12 @@ function setupEventListeners() {
   });
 }
 
-// Event handlers
 async function handleLogin() {
   const email = document.getElementById("loginEmail").value;
   const password = document.getElementById("loginPassword").value;
   currentUser = await login(email, password);
   if (currentUser) {
-    loadUserData();
+    loadAndRenderUserData();
   }
 }
 
@@ -174,17 +150,12 @@ async function handleAddTrip() {
     showNotification("Please enter a trip name", "error");
     return;
   }
-  
+
   const newTrip = await addTrip(name, curr, currentUser.id);
   if (newTrip) {
-    // Add to state
     state[newTrip.id] = { ...newTrip, participants: [], expenses: [] };
     state.trips.push(newTrip);
-    
-    // Refresh UI
     refreshUI();
-    
-    // Clear form
     document.getElementById("tripName").value = "";
     document.getElementById("tripCurrency").value = "";
   }
@@ -192,18 +163,14 @@ async function handleAddTrip() {
 
 async function handleDeleteTrip() {
   if (!currentTripId) return;
-  
   const trip = state.trips.find(t => t.id === currentTripId);
   if (!trip) return;
-  
+
   if (confirm(`Are you sure you want to delete the trip "${trip.name}"? This action cannot be undone.`)) {
     const success = await deleteTrip(currentTripId);
     if (success) {
-      // Update local state
       state.trips = state.trips.filter(t => t.id !== currentTripId);
       delete state[currentTripId];
-      
-      // Refresh UI
       currentTripId = state.trips[0]?.id || null;
       refreshUI();
     }
@@ -215,25 +182,20 @@ async function handleAddParticipant() {
     showNotification("Please select or create a trip first", "error");
     return;
   }
-  
+
   const name = document.getElementById("participantName").value.trim();
   if (!name) {
     showNotification("Please enter a participant name", "error");
     return;
   }
-  
+
   const newParticipant = await addParticipant(currentTripId, name);
   if (newParticipant) {
-    // Add to state
     state[currentTripId].participants.push(newParticipant);
-    
-    // Refresh UI
     UI.refreshParticipantsUI(state[currentTripId].participants);
     UI.refreshSplitRows("splitRows", "splitSummary", "expAmt", "expSplitType", state[currentTripId].participants);
     UI.refreshBalancesUI(currentTripId, state[currentTripId].participants, state[currentTripId].expenses);
     UI.refreshOverview(currentTripId, state[currentTripId].expenses, state[currentTripId].participants);
-    
-    // Clear form
     document.getElementById("participantName").value = "";
   }
 }
@@ -252,5 +214,4 @@ function handleSplitInput() {
 }
 
 // Initialize the app
-
 init();
