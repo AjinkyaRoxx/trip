@@ -3,6 +3,9 @@ import { loadUserData, addTrip, deleteTrip, addParticipant } from './database.js
 import { showNotification } from './utilities.js';
 import UI from './ui.js';
 
+// Debug: verify imported function
+console.log("Imported loadUserData from database.js:", loadUserData);
+
 // Global state
 let currentUser = null;
 let currentTripId = null;
@@ -49,13 +52,11 @@ function init() {
 }
 
 // Load user data
-async function loadUserData() {
+async function loadAndRenderUserData() {
   if (!currentUser) return;
-  
-  const userData = await loadUserData(currentUser.id);
+
+  const userData = await loadUserData(currentUser.id); // this uses the imported function
   state = userData;
-  
-  // Refresh UI
   refreshUI();
 }
 
@@ -251,4 +252,5 @@ function handleSplitInput() {
 }
 
 // Initialize the app
+
 init();
