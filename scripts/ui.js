@@ -29,49 +29,19 @@ export function showRegisterForm() {
   document.getElementById("registerSection").style.display = "block";
 }
 
-export function refreshExpensesUI(expenses, participants, containerId = "expensesTbody", 
-                                recentContainerId = "recent-expenses") {
+export function refreshExpensesUI(expenses, participants, containerId = "expensesTbody", recentContainerId = "recent-expenses") {
   const tbody = document.getElementById(containerId);
   const recentTbody = document.getElementById(recentContainerId);
   tbody.innerHTML = "";
   recentTbody.innerHTML = "";
-  
-  if (expenses.length === 0) {
+
+  if (!expenses || expenses.length === 0) {
     tbody.innerHTML = "<tr><td colspan='6' style='text-align: center;'>No expenses yet</td></tr>";
     recentTbody.innerHTML = "<tr><td colspan='6' style='text-align: center;'>No expenses yet</td></tr>";
     return;
   }
 
-  // Attach edit/delete handlers
-document.querySelectorAll(".edit-expense").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const expenseId = btn.getAttribute("data-id");
-    const expense = expenses.find(e => e.id === expenseId);
-    if (expense) {
-      window.editingExpenseId = expense.id;
-      window.openEditExpenseModal(expense);
-    }
-  });
-});
-
-document.querySelectorAll(".delete-expense").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const expenseId = btn.getAttribute("data-id");
-    if (confirm("Delete this expense?")) {
-      const success = await window.deleteExpense(expenseId);
-      if (success) {
-        const trip = window.state[window.currentTripId];
-        trip.expenses = trip.expenses.filter(e => e.id !== expenseId);
-        window.refreshUI();
-      }
-    }
-  });
-});
-
-  
-  // Show only 5 most recent expenses in overview
   const recentExpenses = [...expenses].slice(0, 5);
-  
   recentExpenses.forEach(e => {
     const payer = participants.find(p => p.id === e.payer_id)?.name || "Unknown";
     const tr = document.createElement("tr");
@@ -88,7 +58,7 @@ document.querySelectorAll(".delete-expense").forEach(btn => {
     `;
     recentTbody.appendChild(tr);
   });
-  
+
   expenses.forEach(e => {
     const payer = participants.find(p => p.id === e.payer_id)?.name || "Unknown";
     const tr = document.createElement("tr");
@@ -105,6 +75,32 @@ document.querySelectorAll(".delete-expense").forEach(btn => {
     `;
     tbody.appendChild(tr);
   });
+
+  // ✅ Attach handlers after rendering
+  document.querySelectorAll(".edit-expense").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const expenseId = btn.getAttribute("data-id");
+      const expense = expenses.find(e => e.id === expenseId);
+      if (expense) {
+        window.editingExpenseId = expense.id;
+        window.openEditExpenseModal(expense);
+      }
+    });
+  });
+
+  document.querySelectorAll(".delete-expense").forEach(btn => {
+    btn.addEventListener("click", async () => {
+      const expenseId = btn.getAttribute("data-id");
+      if (confirm("Delete this expense?")) {
+        const success = await window.deleteExpense(expenseId);
+        if (success) {
+          const trip = window.state[window.currentTripId];
+          trip.expenses = trip.expenses.filter(e => e.id !== expenseId);
+          window.refreshUI();
+        }
+      }
+    });
+  });
 }
 
 export function refreshOverview(tripId, expenses, participants, 
@@ -119,16 +115,12 @@ export function refreshOverview(tripId, expenses, participants,
     document.getElementById(expensesCountId).textContent = "0 expenses";
     return;
   }
-  
-  // Calculate total expenses
+
   const totalExpenses = expenses.reduce((sum, e) => sum + e.amount, 0);
   document.getElementById(totalExpensesId).textContent = totalExpenses.toFixed(2);
   document.getElementById(expensesCountId).textContent = `${expenses.length} expense${expenses.length !== 1 ? 's' : ''}`;
-  
-  // Participants count
   document.getElementById(participantsCountId).textContent = participants.length;
-  
-  // Calculate outstanding amount (sum of positive balances)
+
   const { bal } = computeBalances(tripId, participants, expenses);
   const outstanding = bal.reduce((sum, b) => b > 0 ? sum + b : sum, 0);
   document.getElementById(outstandingAmountId).textContent = outstanding.toFixed(2);
@@ -137,14 +129,9 @@ export function refreshOverview(tripId, expenses, participants,
 export function setupTabNavigation() {
   document.querySelectorAll(".tab-btn").forEach(btn => {
     btn.addEventListener("click", () => {
-      // Remove active class from all tabs and contents
       document.querySelectorAll(".tab-btn").forEach(b => b.classList.remove("active"));
       document.querySelectorAll(".tab-content").forEach(c => c.classList.remove("active"));
-      
-      // Add active class to clicked tab
       btn.classList.add("active");
-      
-      // Show corresponding content
       const tabId = btn.getAttribute("data-tab");
       document.getElementById(`${tabId}-tab`).classList.add("active");
     });
@@ -166,6 +153,4 @@ export default {
   refreshTripsUI,
   refreshBalancesUI,
   setupTabNavigation
-
 };
-
