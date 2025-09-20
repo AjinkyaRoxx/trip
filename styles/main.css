@@ -53,6 +53,16 @@ header {
   font-size: 22px;
 }
 
+.logo-img {
+  height: 80px;
+  vertical-align: middle;
+  margin-top: 2px;
+  margin-bottom: 2px;
+  margin-right: 8px;
+  display: inline-block;
+}
+
+
 h1, h2, h3, h4 {
   margin-bottom: 12px;
   font-weight: 600;
@@ -484,7 +494,14 @@ tbody tr:hover {
     font-size: 13px;
   }
 
+
   th, td {
     padding: 8px 10px;
   }
+  
+/* ✅ Add this inside the same block */
+.logo-img {
+    height: 50px;
+  }
+}
 }
