@@ -3,7 +3,6 @@ import { loadUserData, addTrip, deleteTrip, addParticipant } from './database.js
 import { showNotification } from './utilities.js';
 import UI from './ui.js';
 
-// Debug: verify imported function
 console.log("Imported loadUserData from database.js:", loadUserData);
 
 // Global state
@@ -19,11 +18,19 @@ let state = {
 // Initialize the app
 function init() {
   const today = new Date().toISOString().split('T')[0];
-  document.getElementById("expDate").value = today;
-  document.getElementById("editExpDate").value = today;
+  const expDate = document.getElementById("expDate");
+  const editExpDate = document.getElementById("editExpDate");
+  if (expDate) expDate.value = today;
+  if (editExpDate) editExpDate.value = today;
+
+  if (!supabase) {
+    console.error("Supabase not initialized");
+    showNotification("Supabase client not available", "error");
+    return;
+  }
 
   supabase.auth.getSession().then(({ data: { session } }) => {
-    if (session) {
+    if (session?.user) {
       currentUser = session.user;
       UI.showAppUI();
       loadAndRenderUserData();
@@ -33,7 +40,7 @@ function init() {
   });
 
   supabase.auth.onAuthStateChange((event, session) => {
-    if (event === 'SIGNED_IN' && session) {
+    if (event === 'SIGNED_IN' && session?.user) {
       currentUser = session.user;
       UI.showAppUI();
       loadAndRenderUserData();
@@ -50,11 +57,17 @@ function init() {
 // Load user data and refresh UI
 async function loadAndRenderUserData() {
   if (!currentUser) return;
-  const userData = await loadUserData(currentUser.id);
-  state = userData;
-  refreshUI();
+  try {
+    const userData = await loadUserData(currentUser.id);
+    state = userData;
+    refreshUI();
+  } catch (err) {
+    console.error("Failed to load user data:", err);
+    showNotification("Error loading user data", "error");
+  }
 }
 
+// Refresh UI
 function refreshUI() {
   currentTripId = UI.refreshTripSelect(state.trips, currentTripId, handleTripChange);
   UI.refreshTripsUI(state.trips, handleTripSelect);
@@ -69,68 +82,78 @@ function refreshUI() {
   }
 }
 
-function handleTripChange(tripId) {
-  currentTripId = tripId;
-  refreshUI();
-}
-
-function handleTripSelect(tripId) {
-  currentTripId = tripId;
-  document.getElementById('tripSelect').value = tripId;
-  document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
-  document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
-  document.querySelector('[data-tab="overview"]').classList.add('active');
-  document.getElementById('overview-tab').classList.add('active');
-  refreshUI();
-}
-
+// Event listeners
 function setupEventListeners() {
-  document.getElementById("loginBtn").addEventListener("click", handleLogin);
-  document.getElementById("registerBtn").addEventListener("click", handleRegister);
-  document.getElementById("showRegister").addEventListener("click", (e) => {
-    e.preventDefault();
-    UI.showRegisterForm();
-  });
-  document.getElementById("showLogin").addEventListener("click", (e) => {
-    e.preventDefault();
-    UI.showLoginForm();
-  });
-  document.getElementById("logoutBtn").addEventListener("click", handleLogout);
-  document.getElementById("addTripBtn").addEventListener("click", handleAddTrip);
-  document.getElementById("deleteTripBtn").addEventListener("click", handleDeleteTrip);
-  document.getElementById("addParticipantBtn").addEventListener("click", handleAddParticipant);
-  document.getElementById("expSplitType").addEventListener("change", handleSplitTypeChange);
-  document.getElementById("expAmt").addEventListener("input", handleAmountChange);
-  document.getElementById("splitRows").addEventListener("input", handleSplitInput);
-  document.getElementById("addExpenseBtn").addEventListener("click", handleAddExpense);
-  document.getElementById("editExpSplitType").addEventListener("change", handleEditSplitTypeChange);
-  document.getElementById("editExpAmt").addEventListener("input", handleEditAmountChange);
-  document.getElementById("editSplitRows").addEventListener("input", handleEditSplitInput);
-  document.getElementById("saveExpenseBtn").addEventListener("click", handleSaveExpense);
-  document.getElementById("closeModalBtn").addEventListener("click", closeEditExpenseModal);
-  document.querySelector(".modal-close").addEventListener("click", closeEditExpenseModal);
+  const bind = (id, event, handler) => {
+    const el = document.getElementById(id);
+    if (el) el.addEventListener(event, handler);
+  };
 
-  window.addEventListener("click", (event) => {
+  bind("loginBtn", "click", handleLogin);
+  bind("registerBtn", "click", handleRegister);
+  bind("showRegister", "click", e => { e.preventDefault(); UI.showRegisterForm(); });
+  bind("showLogin", "click", e => { e.preventDefault(); UI.showLoginForm(); });
+  bind("logoutBtn", "click", handleLogout);
+  bind("addTripBtn", "click", handleAddTrip);
+  bind("deleteTripBtn", "click", handleDeleteTrip);
+  bind("addParticipantBtn", "click", handleAddParticipant);
+  bind("expSplitType", "change", handleSplitTypeChange);
+  bind("expAmt", "input", handleAmountChange);
+  bind("splitRows", "input", handleSplitInput);
+  bind("addExpenseBtn", "click", handleAddExpense);
+  bind("editExpSplitType", "change", handleEditSplitTypeChange);
+  bind("editExpAmt", "input", handleEditAmountChange);
+  bind("editSplitRows", "input", handleEditSplitInput);
+  bind("saveExpenseBtn", "click", handleSaveExpense);
+  bind("closeModalBtn", "click", closeEditExpenseModal);
+
+  const modalClose = document.querySelector(".modal-close");
+  if (modalClose) modalClose.addEventListener("click", closeEditExpenseModal);
+
+  window.addEventListener("click", event => {
     const modal = document.getElementById("editExpenseModal");
-    if (event.target === modal) {
-      closeEditExpenseModal();
-    }
+    if (event.target === modal) closeEditExpenseModal();
   });
 }
 
+// Auth handlers
 async function handleLogin() {
-  const email = document.getElementById("loginEmail").value;
-  const password = document.getElementById("loginPassword").value;
-  currentUser = await login(email, password);
-  if (currentUser) {
-    loadAndRenderUserData();
+  console.log("Login button clicked");
+
+  const email = document.getElementById("loginEmail")?.value;
+  const password = document.getElementById("loginPassword")?.value;
+
+  if (!email || !password) {
+    showNotification("Please enter both email and password", "error");
+    return;
+  }
+
+  try {
+    currentUser = await login(email, password);
+    console.log("Login result:", currentUser);
+
+    if (currentUser) {
+      UI.showAppUI();
+      loadAndRenderUserData();
+    } else {
+      showNotification("Login failed. Please check your credentials.", "error");
+    }
+  } catch (err) {
+    console.error("Login error:", err);
+    showNotification("An error occurred during login.", "error");
   }
 }
 
 async function handleRegister() {
-  const name = document.getElementById("registerName").value;
-  const email = document.getElementById("registerEmail").value;
-  const password = document.getElementById("registerPassword").value;
+  const name = document.getElementById("registerName")?.value;
+  const email = document.getElementById("registerEmail")?.value;
+  const password = document.getElementById("registerPassword")?.value;
+
+  if (!name || !email || !password) {
+    showNotification("Please fill all registration fields", "error");
+    return;
+  }
+
   currentUser = await register(name, email, password);
 }
 
@@ -143,9 +166,11 @@ async function handleLogout() {
   }
 }
 
+// Trip handlers
 async function handleAddTrip() {
-  const name = document.getElementById("tripName").value.trim();
-  const curr = document.getElementById("tripCurrency").value.trim() || "INR";
+  const name = document.getElementById("tripName")?.value.trim();
+  const curr = document.getElementById("tripCurrency")?.value.trim() || "INR";
+
   if (!name) {
     showNotification("Please enter a trip name", "error");
     return;
@@ -166,7 +191,7 @@ async function handleDeleteTrip() {
   const trip = state.trips.find(t => t.id === currentTripId);
   if (!trip) return;
 
-  if (confirm(`Are you sure you want to delete the trip "${trip.name}"? This action cannot be undone.`)) {
+  if (confirm(`Delete trip "${trip.name}"? This cannot be undone.`)) {
     const success = await deleteTrip(currentTripId);
     if (success) {
       state.trips = state.trips.filter(t => t.id !== currentTripId);
@@ -179,13 +204,13 @@ async function handleDeleteTrip() {
 
 async function handleAddParticipant() {
   if (!currentTripId) {
-    showNotification("Please select or create a trip first", "error");
+    showNotification("Select or create a trip first", "error");
     return;
   }
 
-  const name = document.getElementById("participantName").value.trim();
+  const name = document.getElementById("participantName")?.value.trim();
   if (!name) {
-    showNotification("Please enter a participant name", "error");
+    showNotification("Enter a participant name", "error");
     return;
   }
 
@@ -200,6 +225,7 @@ async function handleAddParticipant() {
   }
 }
 
+// Expense handlers
 function handleSplitTypeChange() {
   if (!currentTripId) return;
   UI.refreshSplitRows("splitRows", "splitSummary", "expAmt", "expSplitType", state[currentTripId].participants);
@@ -213,5 +239,13 @@ function handleSplitInput() {
   UI.updateSplitSummary("splitSummary", "expAmt", "splitRows", state[currentTripId].participants);
 }
 
-// Initialize the app
-init();
+// Placeholder for modal expense editing
+function handleAddExpense() {}
+function handleEditSplitTypeChange() {}
+function handleEditAmountChange() {}
+function handleEditSplitInput() {}
+function handleSaveExpense() {}
+function closeEditExpenseModal() {}
+
+// Start the app
+init
