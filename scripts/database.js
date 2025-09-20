@@ -114,7 +114,7 @@ export async function updateExpense(expenseId, expenseData) {
 
     if (error) throw error;
 
-    showNotification(`Expense "${expenseData.desc}" updated successfully`);
+    showNotification(`Expense "${expenseData.description}" updated successfully`);
     return true;
   } catch (error) {
     showNotification("Error updating expense: " + error.message, "error");
@@ -184,4 +184,5 @@ export async function loadUserData(userId) {
     };
   }
 }
+
 
