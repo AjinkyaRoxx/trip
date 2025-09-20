@@ -315,7 +315,6 @@ function openEditExpenseModal(expense) {
   document.getElementById("editExpenseModal").style.display = "block";
 }
 
-
 function handleEditSplitTypeChange() {
   const type = document.getElementById("editExpSplitType")?.value;
   const participants = state[currentTripId]?.participants || [];
@@ -383,12 +382,13 @@ function closeEditExpenseModal() {
 window.editingExpenseId = null;
 window.openEditExpenseModal = openEditExpenseModal;
 window.deleteExpense = deleteExpense;
+window.updateExpense = updateExpense;
 window.refreshUI = refreshUI;
-window.deleteExpense = deleteExpense;
 
 
 // Start the app
 init();
+
 
 
 
