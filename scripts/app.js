@@ -9,7 +9,7 @@ console.log("Imported loadUserData from database.js:", loadUserData);
 // Global state
 let currentUser = null;
 let currentTripId = null;
-let editingExpenseId = null;
+let window.editingExpenseId = null;
 let state = {
   trips: [],
   participants: {},
@@ -332,7 +332,7 @@ function handleEditSplitInput() {
 }
 
 async function handleSaveExpense() {
-  if (!currentTripId || editingExpenseId === null) {
+  if (!currentTripId || window.editingExpenseId === null) {
     showNotification("No expense selected for editing", "error");
     return;
   }
@@ -376,7 +376,7 @@ async function handleSaveExpense() {
 function closeEditExpenseModal() {
   const modal = document.getElementById("editExpenseModal");
   if (modal) modal.style.display = "none";
-  editingExpenseId = null;
+  window.editingExpenseId = null;
 }
 
 window.editingExpenseId = null;
@@ -388,6 +388,7 @@ window.refreshUI = refreshUI;
 
 // Start the app
 init();
+
 
 
 
