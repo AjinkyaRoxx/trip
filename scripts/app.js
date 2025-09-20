@@ -301,6 +301,21 @@ async function handleAddExpenseClick() {
   }
 }
 
+function openEditExpenseModal(expense) {
+  document.getElementById("editExpDesc").value = expense.description || "";
+  document.getElementById("editExpAmt").value = expense.amount || "";
+  document.getElementById("editExpDate").value = expense.date || "";
+  document.getElementById("editExpCategory").value = expense.category || "";
+  document.getElementById("editExpNote").value = expense.note || "";
+  document.getElementById("editExpPayer").value = expense.payer_id || "";
+  document.getElementById("editExpSplitType").value = expense.split_type || "equal";
+
+  UI.refreshSplitRows("editSplitRows", "editSplitSummary", "editExpAmt", "editExpSplitType", state[currentTripId].participants);
+
+  document.getElementById("editExpenseModal").style.display = "block";
+}
+
+
 function handleEditSplitTypeChange() {
   const type = document.getElementById("editExpSplitType")?.value;
   const participants = state[currentTripId]?.participants || [];
@@ -365,9 +380,14 @@ function closeEditExpenseModal() {
   editingExpenseId = null;
 }
 
+window.editingExpenseId = null;
+window.openEditExpenseModal = openEditExpenseModal;
+window.deleteExpense = deleteExpense;
+window.refreshUI = refreshUI;
 
 // Start the app
 init();
+
 
 
 
