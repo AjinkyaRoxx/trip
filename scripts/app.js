@@ -255,7 +255,51 @@ function handleSplitInput() {
 }
 
 // Placeholder for modal expense editing
-function handleAddExpense() {}
+async function handleAddExpense() {
+  if (!currentTripId || !state[currentTripId]) {
+    showNotification("Select a trip before adding expenses", "error");
+    return;
+  }
+
+  const trip = state[currentTripId];
+  const desc = document.getElementById("expDesc")?.value.trim();
+  const amt = parseFloat(document.getElementById("expAmt")?.value || "0");
+  const date = document.getElementById("expDate")?.value;
+  const payer = document.getElementById("expPayer")?.value;
+  const type = document.getElementById("expSplitType")?.value;
+  const category = document.getElementById("expCategory")?.value.trim();
+  const note = document.getElementById("expNote")?.value.trim();
+
+  if (!desc || !amt || !date || !payer || !type) {
+    showNotification("Please fill all required expense fields", "error");
+    return;
+  }
+
+  const expenseData = {
+    desc,
+    amount: amt,
+    date,
+    payer_id: payer,
+    split_type: type,
+    category,
+    note
+  };
+
+  const newExpense = await handleAddExpense(currentTripId, expenseData, trip.participants);
+  if (newExpense) {
+    trip.expenses.unshift(newExpense);
+    refreshUI();
+
+    // Clear form
+    document.getElementById("expDesc").value = "";
+    document.getElementById("expAmt").value = "";
+    document.getElementById("expDate").value = new Date().toISOString().split("T")[0];
+    document.getElementById("expCategory").value = "";
+    document.getElementById("expNote").value = "";
+  }
+}
+
+
 function handleEditSplitTypeChange() {}
 function handleEditAmountChange() {}
 function handleEditSplitInput() {}
@@ -264,5 +308,6 @@ function closeEditExpenseModal() {}
 
 // Start the app
 init();
+
 
 
