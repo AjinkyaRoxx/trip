@@ -27,14 +27,11 @@
         <i class="fas fa-receipt"></i>
         <span>Trip Splitter</span>
       </div>
-      <button id="logoutBtn" class="btn-sm danger" style="display: none;">
-        <i class="fas fa-sign-out-alt"></i> Logout
-      </button>
+      <button id="logoutBtn" class="btn-sm danger" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</button>
     </div>
   </header>
 
   <div class="container">
-    <!-- Login Section -->
     <div id="loginSection" class="login-form">
       <h2><i class="fas fa-sign-in-alt"></i> Login to Trip Splitter</h2>
       <input type="email" id="loginEmail" placeholder="Email" />
@@ -45,7 +42,6 @@
       </p>
     </div>
 
-    <!-- Register Section -->
     <div id="registerSection" class="login-form" style="display: none;">
       <h2><i class="fas fa-user-plus"></i> Create Account</h2>
       <input type="text" id="registerName" placeholder="Full Name" />
@@ -57,15 +53,12 @@
       </p>
     </div>
 
-    <!-- Main App Content -->
     <div id="appContent" style="display: none;">
-      <!-- Trip selector -->
       <div class="trip-selector">
         <select id="tripSelect"></select>
         <button id="deleteTripBtn" class="btn-sm danger"><i class="fas fa-trash"></i> Delete</button>
       </div>
 
-      <!-- Navigation tabs -->
       <div class="section-tabs">
         <div class="tab-btn active" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</div>
         <div class="tab-btn" data-tab="trips"><i class="fas fa-suitcase"></i> My Trips</div>
@@ -74,83 +67,152 @@
         <div class="tab-btn" data-tab="balances"><i class="fas fa-scale-balanced"></i> Balances</div>
       </div>
 
-      <!-- Tab contents -->
-<!-- Overview Tab -->
-<div id="overview-tab" class="tab-content active">
-  <div id="overviewSummary" class="overview-summary"></div>
-  <div id="overview-tab" class="tab-content active">
-      <div class="stats-grid">
-        <div class="stat-box">
-          <div class="stat-label">Total Expenses</div>
-          <div class="stat-value" id="total-expenses">0.00</div>
-          <div class="muted" id="expenses-count">0 expenses</div>
+      <div id="overview-tab" class="tab-content active">
+        <div class="stats-grid">
+          <div class="stat-box">
+            <div class="stat-label">Total Expenses</div>
+            <div class="stat-value" id="total-expenses">0.00</div>
+            <div class="muted" id="expenses-count">0 expenses</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Participants</div>
+            <div class="stat-value" id="participants-count">0</div>
+            <div class="muted">in this trip</div>
+          </div>
+          <div class="stat-box">
+            <div class="stat-label">Outstanding</div>
+            <div class="stat-value" id="outstanding-amount">0.00</div>
+            <div class="muted">to be settled</div>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-label">Participants</div>
-          <div class="stat-value" id="participants-count">0</div>
-          <div class="muted">in this trip</div>
+
+        <div class="card">
+          <h3><i class="fas fa-plus-circle"></i> Create New Trip</h3>
+          <div class="row">
+            <input id="tripName" placeholder="Trip name (e.g., Goa Sep 2025)" />
+            <input id="tripCurrency" placeholder="Currency (e.g., INR)" />
+            <button id="addTripBtn" class="success"><i class="fas fa-plus"></i> Add Trip</button>
+          </div>
         </div>
-        <div class="stat-box">
-          <div class="stat-label">Outstanding</div>
-          <div class="stat-value" id="outstanding-amount">0.00</div>
-          <div class="muted">to be settled</div>
+
+        <div class="card">
+          <h3><i class="fas fa-receipt"></i> Recent Expenses</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>Description</th><th>Amount</th><th>Payer</th><th>Type</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="recent-expenses">
+              <tr><td colspan="6" style="text-align: center;">No expenses yet</td></tr>
+            </tbody>
+          </table>
         </div>
       </div>
 
-      <div class="card">
-        <h3><i class="fas fa-plus-circle"></i> Create New Trip</h3>
-        <div class="row">
-          <input id="tripName" placeholder="Trip name (e.g., Goa Sep 2025)" />
-          <input id="tripCurrency" placeholder="Currency (e.g., INR)" />
-          <button id="addTripBtn" class="success"><i class="fas fa-plus"></i> Add Trip</button>
+      <div id="trips-tab" class="tab-content">
+        <div class="card">
+          <h3><i class="fas fa-suitcase"></i> My Trips</h3>
+          <div class="trip-cards" id="tripsList"></div>
         </div>
       </div>
 
-      <div class="card">
-        <h3><i class="fas fa-receipt"></i> Recent Expenses</h3>
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th><th>Description</th><th>Amount</th><th>Payer</th><th>Type</th>
-            </tr>
-          </thead>
-          <tbody id="recent-expenses">
-            <tr><td colspan="5" style="text-align: center;">No expenses yet</td></tr>
-          </tbody>
-        </table>
+      <div id="expenses-tab" class="tab-content">
+        <div class="card">
+          <h3><i class="fas fa-plus-circle"></i> Add Expense</h3>
+          <div class="grid">
+            <input id="expDesc" placeholder="Description (e.g., Lunch)" />
+            <input id="expAmt" type="number" step="0.01" placeholder="Amount" />
+            <input id="expDate" type="date" />
+            <select id="expPayer"></select>
+            <select id="expSplitType">
+              <option value="equal">Equal Split</option>
+              <option value="shares">By Shares</option>
+              <option value="percent">By Percentage</option>
+              <option value="exact">Exact Amounts</option>
+            </select>
+            <input id="expCategory" placeholder="Category (optional)" />
+            <input id="expNote" placeholder="Notes (optional)" />
+          </div>
+          <div class="split-controls">
+            <div class="muted">Enter split per participant based on selected type.</div>
+            <div id="splitRows"></div>
+            <div id="splitSummary" class="summary-box"></div>
+          </div>
+          <div class="row">
+            <button id="addExpenseBtn" class="success"><i class="fas fa-check"></i> Add Expense</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h3><i class="fas fa-history"></i> All Expenses</h3>
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th><th>Description</th><th>Amount</th><th>Payer</th><th>Type</th><th>Actions</th>
+              </tr>
+            </thead>
+            <tbody id="expensesTbody"></tbody>
+          </table>
+        </div>
       </div>
-    </div>
-</div>
 
-<!-- Trips Tab -->
-<div id="trips-tab" class="tab-content">
-  <div id="tripsList" class="trip-list"></div>
-</div>
+      <div id="participants-tab" class="tab-content">
+        <div class="card">
+          <h3><i class="fas fa-user-plus"></i> Add Participant</h3>
+          <div class="row">
+            <input id="participantName" placeholder="Participant name" />
+            <button id="addParticipantBtn" class="success"><i class="fas fa-plus"></i> Add</button>
+          </div>
+          <div class="participant-list" id="participantsList"></div>
+        </div>
+      </div>
 
-<!-- Expenses Tab -->
-<div id="expenses-tab" class="tab-content">
-  <div id="expensesList" class="expenses-list"></div>
-</div>
-
-<!-- Participants Tab -->
-<div id="participants-tab" class="tab-content">
-  <div id="participantsList" class="participants-list"></div>
-</div>
-
-<!-- Balances Tab -->
-<div id="balances-tab" class="tab-content">
-  <div id="balancesSummary" class="balances-summary"></div>
-</div>
-
+      <div id="balances-tab" class="tab-content">
+        <div class="card">
+          <h3><i class="fas fa-scale-balanced"></i> Balances</h3>
+          <ul id="balancesList"></ul>
+          
+          <h4><i class="fas fa-hand-holding-usd"></i> Suggested Settlements</h4>
+          <div class="settlement-cards" id="settlementCards"></div>
+        </div>
+      </div>
     </div>
   </div>
 
   <!-- Edit Expense Modal -->
   <div id="editExpenseModal" class="modal">
-    <!-- Modal content -->
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3><i class="fas fa-edit"></i> Edit Expense</h3>
+        <button class="modal-close">&times;</button>
+      </div>
+      <div class="grid">
+        <input id="editExpDesc" placeholder="Description (e.g., Lunch)" />
+        <input id="editExpAmt" type="number" step="0.01" placeholder="Amount" />
+        <input id="editExpDate" type="date" />
+        <select id="editExpPayer"></select>
+        <select id="editExpSplitType">
+          <option value="equal">Equal Split</option>
+          <option value="shares">By Shares</option>
+          <option value="percent">By Percentage</option>
+          <option value="exact">Exact Amounts</option>
+        </select>
+        <input id="editExpCategory" placeholder="Category (optional)" />
+        <input id="editExpNote" placeholder="Notes (optional)" />
+      </div>
+      <div class="split-controls">
+        <div class="muted">Enter split per participant based on selected type.</div>
+        <div id="editSplitRows"></div>
+        <div id="editSplitSummary" class="summary-box"></div>
+      </div>
+      <div class="row">
+        <button id="saveExpenseBtn" class="success"><i class="fas fa-save"></i> Save Changes</button>
+        <button id="closeModalBtn" class="secondary"><i class="fas fa-times"></i> Cancel</button>
+      </div>
+    </div>
   </div>
 
-  <!-- Notification element -->
   <div id="notification" class="notification">
     <i class="fas fa-check-circle"></i>
     <div class="notification-content">Operation completed successfully</div>
@@ -169,5 +231,6 @@
 </body>
 
 </html>
+
 
 
