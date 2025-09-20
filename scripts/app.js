@@ -1,5 +1,5 @@
 import { login, register, logout, supabase } from './auth.js';
-import { loadUserData, addTrip, deleteTrip, addParticipant } from './database.js';
+import { loadUserData, addTrip, deleteTrip, addParticipant, deleteExpense } from './database.js';
 import { showNotification } from './utilities.js';
 import { handleAddExpense } from './components/expenses.js';
 import UI from './ui.js';
@@ -384,9 +384,12 @@ window.editingExpenseId = null;
 window.openEditExpenseModal = openEditExpenseModal;
 window.deleteExpense = deleteExpense;
 window.refreshUI = refreshUI;
+window.deleteExpense = deleteExpense;
+
 
 // Start the app
 init();
+
 
 
 
