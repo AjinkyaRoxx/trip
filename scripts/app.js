@@ -92,6 +92,11 @@ function handleTripChange(tripId) {
   refreshUI();
 }
 
+function handleTripSelect(tripId) {
+  currentTripId = tripId;
+  refreshUI();
+}
+
 // Event listeners
 function setupEventListeners() {
   const bind = (id, event, handler) => {
@@ -259,4 +264,5 @@ function closeEditExpenseModal() {}
 
 // Start the app
 init();
+
 
