@@ -263,15 +263,15 @@ async function handleAddExpenseClick() {
   }
 
   const trip = state[currentTripId];
-  const desc = document.getElementById("expDesc")?.value.trim();
-  const amt = parseFloat(document.getElementById("expAmt")?.value || "0");
+  const description = document.getElementById("expDesc")?.value.trim();
+  const amount = parseFloat(document.getElementById("expAmt")?.value || "0");
   const date = document.getElementById("expDate")?.value;
   const payer = document.getElementById("expPayer")?.value;
   const type = document.getElementById("expSplitType")?.value;
   const category = document.getElementById("expCategory")?.value.trim();
   const note = document.getElementById("expNote")?.value.trim();
 
-  if (!desc || !amt || !date || !payer || !type) {
+  if (!description || !amount || !date || !payer || !type) {
     showNotification("Please fill all required expense fields", "error");
     return;
   }
@@ -309,6 +309,7 @@ function closeEditExpenseModal() {}
 
 // Start the app
 init();
+
 
 
 
