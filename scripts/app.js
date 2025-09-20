@@ -266,24 +266,25 @@ async function handleAddExpenseClick() {
   const description = document.getElementById("expDesc")?.value.trim();
   const amount = parseFloat(document.getElementById("expAmt")?.value || "0");
   const date = document.getElementById("expDate")?.value;
-  const payer = document.getElementById("expPayer")?.value;
-  const type = document.getElementById("expSplitType")?.value;
+  const payer_id = document.getElementById("expPayer")?.value;
+  const split_type = document.getElementById("expSplitType")?.value;
   const category = document.getElementById("expCategory")?.value.trim();
   const note = document.getElementById("expNote")?.value.trim();
 
-  if (!description || !amount || !date || !payer || !type) {
+  if (!description || !amount || !date || !payer_id || !split_type) {
     showNotification("Please fill all required expense fields", "error");
     return;
   }
 
   const expenseData = {
-    desc,
-    amount: amt,
+    description,
+    amount,
     date,
-    payer_id: payer,
-    split_type: type,
+    payer_id,
+    split_type,
     category,
-    note
+    note,
+    trip_id: currentTripId
   };
 
   const newExpense = await handleAddExpense(currentTripId, expenseData, trip.participants);
@@ -300,7 +301,6 @@ async function handleAddExpenseClick() {
   }
 }
 
-
 function handleEditSplitTypeChange() {}
 function handleEditAmountChange() {}
 function handleEditSplitInput() {}
@@ -309,6 +309,7 @@ function closeEditExpenseModal() {}
 
 // Start the app
 init();
+
 
 
 
