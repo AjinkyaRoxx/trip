@@ -77,7 +77,7 @@ document.querySelectorAll(".delete-expense").forEach(btn => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${e.date || ""}</td>
-      <td>${e.desc}</td>
+      <td>${e.description}</td>
       <td>${e.amount.toFixed(2)}</td>
       <td>${payer}</td>
       <td><span class="pill ${e.split_type}">${e.split_type}</span></td>
@@ -94,7 +94,7 @@ document.querySelectorAll(".delete-expense").forEach(btn => {
     const tr = document.createElement("tr");
     tr.innerHTML = `
       <td>${e.date || ""}</td>
-      <td>${e.desc}</td>
+      <td>${e.description}</td>
       <td>${e.amount.toFixed(2)}</td>
       <td>${payer}</td>
       <td><span class="pill ${e.split_type}">${e.split_type}</span></td>
@@ -168,3 +168,4 @@ export default {
   setupTabNavigation
 
 };
+
