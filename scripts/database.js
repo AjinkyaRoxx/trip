@@ -96,7 +96,7 @@ export async function addExpense(expenseData) {
 
     if (error) throw error;
 
-    showNotification(`Expense "${expenseData.desc}" added successfully`);
+    showNotification(`Expense "${expenseData.description}" added successfully`);
     return data;
   } catch (error) {
     showNotification("Error adding expense: " + error.message, "error");
@@ -184,3 +184,4 @@ export async function loadUserData(userId) {
     };
   }
 }
+
