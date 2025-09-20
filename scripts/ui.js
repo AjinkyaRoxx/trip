@@ -80,22 +80,29 @@ export function refreshExpensesUI(expenses, participants, containerId = "expense
   document.querySelectorAll(".edit-expense").forEach(btn => {
     btn.addEventListener("click", () => {
       const expenseId = btn.getAttribute("data-id");
-      const expense = expenses.find(e => e.id === expenseId);
-      if (expense) {
-        window.editingExpenseId = expense.id;
-        window.openEditExpenseModal(expense);
+      const expense = expenses.find(e => String(e.id) === String(expenseId));
+      if (!expense) {
+        console.warn("Expense not found for editing:", expenseId);
+        return;
       }
+      window.editingExpenseId = expense.id;
+      window.openEditExpenseModal(expense);
     });
   });
 
   document.querySelectorAll(".delete-expense").forEach(btn => {
     btn.addEventListener("click", async () => {
       const expenseId = btn.getAttribute("data-id");
+      const expense = expenses.find(e => String(e.id) === String(expenseId));
+      if (!expense) {
+        console.warn("Expense not found for deletion:", expenseId);
+        return;
+      }
       if (confirm("Delete this expense?")) {
         const success = await window.deleteExpense(expenseId);
         if (success) {
           const trip = window.state[window.currentTripId];
-          trip.expenses = trip.expenses.filter(e => e.id !== expenseId);
+          trip.expenses = trip.expenses.filter(e => String(e.id) !== String(expenseId));
           window.refreshUI();
         }
       }
