@@ -78,6 +78,48 @@
 <!-- Overview Tab -->
 <div id="overview-tab" class="tab-content active">
   <div id="overviewSummary" class="overview-summary"></div>
+  <div id="overview-tab" class="tab-content active">
+      <div class="stats-grid">
+        <div class="stat-box">
+          <div class="stat-label">Total Expenses</div>
+          <div class="stat-value" id="total-expenses">0.00</div>
+          <div class="muted" id="expenses-count">0 expenses</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Participants</div>
+          <div class="stat-value" id="participants-count">0</div>
+          <div class="muted">in this trip</div>
+        </div>
+        <div class="stat-box">
+          <div class="stat-label">Outstanding</div>
+          <div class="stat-value" id="outstanding-amount">0.00</div>
+          <div class="muted">to be settled</div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="fas fa-plus-circle"></i> Create New Trip</h3>
+        <div class="row">
+          <input id="tripName" placeholder="Trip name (e.g., Goa Sep 2025)" />
+          <input id="tripCurrency" placeholder="Currency (e.g., INR)" />
+          <button id="addTripBtn" class="success"><i class="fas fa-plus"></i> Add Trip</button>
+        </div>
+      </div>
+
+      <div class="card">
+        <h3><i class="fas fa-receipt"></i> Recent Expenses</h3>
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th><th>Description</th><th>Amount</th><th>Payer</th><th>Type</th>
+            </tr>
+          </thead>
+          <tbody id="recent-expenses">
+            <tr><td colspan="5" style="text-align: center;">No expenses yet</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
 </div>
 
 <!-- Trips Tab -->
@@ -127,4 +169,5 @@
 </body>
 
 </html>
+
 
