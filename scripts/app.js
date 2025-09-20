@@ -1,6 +1,7 @@
 import { login, register, logout, supabase } from './auth.js';
 import { loadUserData, addTrip, deleteTrip, addParticipant } from './database.js';
 import { showNotification } from './utilities.js';
+import { handleAddExpense } from './components/expenses.js';
 import UI from './ui.js';
 
 console.log("Imported loadUserData from database.js:", loadUserData);
@@ -115,7 +116,7 @@ function setupEventListeners() {
   bind("expSplitType", "change", handleSplitTypeChange);
   bind("expAmt", "input", handleAmountChange);
   bind("splitRows", "input", handleSplitInput);
-  bind("addExpenseBtn", "click", handleAddExpense);
+  bind("addExpenseBtn", "click", handleAddExpenseClick);
   bind("editExpSplitType", "change", handleEditSplitTypeChange);
   bind("editExpAmt", "input", handleEditAmountChange);
   bind("editSplitRows", "input", handleEditSplitInput);
@@ -255,7 +256,7 @@ function handleSplitInput() {
 }
 
 // Placeholder for modal expense editing
-async function handleAddExpense() {
+async function handleAddExpenseClick() {
   if (!currentTripId || !state[currentTripId]) {
     showNotification("Select a trip before adding expenses", "error");
     return;
@@ -308,6 +309,7 @@ function closeEditExpenseModal() {}
 
 // Start the app
 init();
+
 
 
 
