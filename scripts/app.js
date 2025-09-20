@@ -1,5 +1,5 @@
 import { login, register, logout, supabase } from './auth.js';
-import { loadUserData, addTrip, deleteTrip, addParticipant, deleteExpense } from './database.js';
+import { loadUserData, addTrip, deleteTrip, addParticipant, deleteExpense, updateExpense } from './database.js';
 import { showNotification } from './utilities.js';
 import { handleAddExpense } from './components/expenses.js';
 import UI from './ui.js';
@@ -388,6 +388,7 @@ window.refreshUI = refreshUI;
 
 // Start the app
 init();
+
 
 
 
