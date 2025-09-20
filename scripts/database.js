@@ -1,7 +1,7 @@
 import { supabase } from './auth.js';
 import { showNotification } from './utilities.js';
 
-// Database operations
+// 🚀 Add a new trip
 export async function addTrip(name, currency, userId) {
   try {
     const newTrip = {
@@ -9,15 +9,15 @@ export async function addTrip(name, currency, userId) {
       currency: currency || "INR",
       user_id: userId
     };
-    
+
     const { data, error } = await supabase
       .from('trips')
       .insert(newTrip)
       .select()
       .single();
-    
+
     if (error) throw error;
-    
+
     showNotification(`Trip "${name}" created successfully`);
     return data;
   } catch (error) {
@@ -26,27 +26,15 @@ export async function addTrip(name, currency, userId) {
   }
 }
 
+// 🗑️ Delete a trip and its data
 export async function deleteTrip(tripId) {
   try {
-    // Delete all related data first
-    await supabase
-      .from('expenses')
-      .delete()
-      .eq('trip_id', tripId);
-    
-    await supabase
-      .from('participants')
-      .delete()
-      .eq('trip_id', tripId);
-    
-    // Delete the trip
-    const { error } = await supabase
-      .from('trips')
-      .delete()
-      .eq('id', tripId);
-    
+    await supabase.from('expenses').delete().eq('trip_id', tripId);
+    await supabase.from('participants').delete().eq('trip_id', tripId);
+
+    const { error } = await supabase.from('trips').delete().eq('id', tripId);
     if (error) throw error;
-    
+
     showNotification("Trip deleted successfully");
     return true;
   } catch (error) {
@@ -55,21 +43,22 @@ export async function deleteTrip(tripId) {
   }
 }
 
+// 👤 Add a participant
 export async function addParticipant(tripId, name) {
   try {
     const newParticipant = {
       name: name.trim(),
       trip_id: tripId
     };
-    
+
     const { data, error } = await supabase
       .from('participants')
       .insert(newParticipant)
       .select()
       .single();
-    
+
     if (error) throw error;
-    
+
     showNotification(`Participant "${name}" added successfully`);
     return data;
   } catch (error) {
@@ -78,15 +67,16 @@ export async function addParticipant(tripId, name) {
   }
 }
 
+// ❌ Remove a participant
 export async function removeParticipant(tripId, participantId) {
   try {
     const { error } = await supabase
       .from('participants')
       .delete()
       .eq('id', participantId);
-    
+
     if (error) throw error;
-    
+
     showNotification("Participant removed successfully");
     return true;
   } catch (error) {
@@ -95,6 +85,7 @@ export async function removeParticipant(tripId, participantId) {
   }
 }
 
+// 💸 Add an expense
 export async function addExpense(expenseData) {
   try {
     const { data, error } = await supabase
@@ -102,9 +93,9 @@ export async function addExpense(expenseData) {
       .insert(expenseData)
       .select()
       .single();
-    
+
     if (error) throw error;
-    
+
     showNotification(`Expense "${expenseData.desc}" added successfully`);
     return data;
   } catch (error) {
@@ -113,15 +104,16 @@ export async function addExpense(expenseData) {
   }
 }
 
+// ✏️ Update an expense
 export async function updateExpense(expenseId, expenseData) {
   try {
     const { error } = await supabase
       .from('expenses')
       .update(expenseData)
       .eq('id', expenseId);
-    
+
     if (error) throw error;
-    
+
     showNotification(`Expense "${expenseData.desc}" updated successfully`);
     return true;
   } catch (error) {
@@ -130,15 +122,16 @@ export async function updateExpense(expenseId, expenseData) {
   }
 }
 
+// 🗑️ Delete an expense
 export async function deleteExpense(expenseId) {
   try {
     const { error } = await supabase
       .from('expenses')
       .delete()
       .eq('id', expenseId);
-    
+
     if (error) throw error;
-    
+
     showNotification("Expense deleted successfully");
     return true;
   } catch (error) {
@@ -147,42 +140,47 @@ export async function deleteExpense(expenseId) {
   }
 }
 
+// 📦 Load all user data
 export async function loadUserData(userId) {
   try {
-    // Load trips
     const { data: trips, error: tripsError } = await supabase
       .from('trips')
       .select('*')
       .eq('user_id', userId)
       .order('created_at', { ascending: false });
-    
+
     if (tripsError) throw tripsError;
-    
-    // Load participants and expenses for each trip
-    const tripsData = {};
-    for (const trip of trips || []) {
+
+    const state = {
+      trips: trips || []
+    };
+
+    for (const trip of state.trips) {
       const { data: participants, error: partsError } = await supabase
         .from('participants')
         .select('*')
         .eq('trip_id', trip.id)
         .order('created_at');
-      
+
       const { data: expenses, error: expensesError } = await supabase
         .from('expenses')
         .select('*')
         .eq('trip_id', trip.id)
         .order('date', { ascending: false });
-      
-      tripsData[trip.id] = {
+
+      state[trip.id] = {
         ...trip,
         participants: participants || [],
         expenses: expenses || []
       };
     }
-    
-    return tripsData;
+
+    return state;
   } catch (error) {
+    console.error("Error loading user data:", error);
     showNotification("Error loading data: " + error.message, "error");
-    return {};
+    return {
+      trips: []
+    };
   }
 }
