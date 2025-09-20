@@ -17,6 +17,8 @@ let state = {
 
 // Initialize the app
 function init() {
+  console.log("Initializing app...");
+
   const today = new Date().toISOString().split('T')[0];
   const expDate = document.getElementById("expDate");
   const editExpDate = document.getElementById("editExpDate");
@@ -30,6 +32,7 @@ function init() {
   }
 
   supabase.auth.getSession().then(({ data: { session } }) => {
+    console.log("Session check:", session);
     if (session?.user) {
       currentUser = session.user;
       UI.showAppUI();
@@ -40,6 +43,7 @@ function init() {
   });
 
   supabase.auth.onAuthStateChange((event, session) => {
+    console.log("Auth state changed:", event, session);
     if (event === 'SIGNED_IN' && session?.user) {
       currentUser = session.user;
       UI.showAppUI();
@@ -58,6 +62,7 @@ function init() {
 async function loadAndRenderUserData() {
   if (!currentUser) return;
   try {
+    console.log("Loading user data for:", currentUser.id);
     const userData = await loadUserData(currentUser.id);
     state = userData;
     refreshUI();
@@ -236,16 +241,4 @@ function handleAmountChange() {
 }
 
 function handleSplitInput() {
-  UI.updateSplitSummary("splitSummary", "expAmt", "splitRows", state[currentTripId].participants);
-}
-
-// Placeholder for modal expense editing
-function handleAddExpense() {}
-function handleEditSplitTypeChange() {}
-function handleEditAmountChange() {}
-function handleEditSplitInput() {}
-function handleSaveExpense() {}
-function closeEditExpenseModal() {}
-
-// Start the app
-init
+  UI.updateSplitSummary
