@@ -3,12 +3,13 @@ import { showNotification } from '../utilities.js';
 
 // 🧮 Get split entries from UI
 export function getSplitEntries(containerId = "splitRows") {
-  const typeSelect = document.getElementById("expSplitType");
+  const typeId = containerId === "editSplitRows" ? "editExpSplitType" : "expSplitType";
+  const typeSelect = document.getElementById(typeId);
   const rows = document.querySelectorAll(`#${containerId} .split-row`);
   const entries = [];
 
   if (!typeSelect || rows.length === 0) {
-    console.warn("Missing split type or rows");
+    console.warn(`Missing split type or rows for container: ${containerId}`);
     return { type: "equal", entries: [] };
   }
 
@@ -189,3 +190,4 @@ export async function handleAddExpense(tripId, expenseData, participants) {
 
   return await addExpense(completeExpenseData);
 }
+
