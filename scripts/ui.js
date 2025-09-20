@@ -41,6 +41,33 @@ export function refreshExpensesUI(expenses, participants, containerId = "expense
     recentTbody.innerHTML = "<tr><td colspan='6' style='text-align: center;'>No expenses yet</td></tr>";
     return;
   }
+
+  // Attach edit/delete handlers
+document.querySelectorAll(".edit-expense").forEach(btn => {
+  btn.addEventListener("click", () => {
+    const expenseId = btn.getAttribute("data-id");
+    const expense = expenses.find(e => e.id === expenseId);
+    if (expense) {
+      window.editingExpenseId = expense.id;
+      window.openEditExpenseModal(expense);
+    }
+  });
+});
+
+document.querySelectorAll(".delete-expense").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const expenseId = btn.getAttribute("data-id");
+    if (confirm("Delete this expense?")) {
+      const success = await window.deleteExpense(expenseId);
+      if (success) {
+        const trip = window.state[window.currentTripId];
+        trip.expenses = trip.expenses.filter(e => e.id !== expenseId);
+        window.refreshUI();
+      }
+    }
+  });
+});
+
   
   // Show only 5 most recent expenses in overview
   const recentExpenses = [...expenses].slice(0, 5);
@@ -139,4 +166,5 @@ export default {
   refreshTripsUI,
   refreshBalancesUI,
   setupTabNavigation
+
 };
