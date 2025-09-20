@@ -301,14 +301,74 @@ async function handleAddExpenseClick() {
   }
 }
 
-function handleEditSplitTypeChange() {}
-function handleEditAmountChange() {}
-function handleEditSplitInput() {}
-function handleSaveExpense() {}
-function closeEditExpenseModal() {}
+function handleEditSplitTypeChange() {
+  const type = document.getElementById("editExpSplitType")?.value;
+  const participants = state[currentTripId]?.participants || [];
+  UI.refreshSplitRows("editSplitRows", "editSplitSummary", "editExpAmt", "editExpSplitType", participants);
+}
+
+function handleEditAmountChange() {
+  const participants = state[currentTripId]?.participants || [];
+  UI.updateSplitSummary("editSplitSummary", "editExpAmt", "editSplitRows", participants);
+}
+
+function handleEditSplitInput() {
+  const participants = state[currentTripId]?.participants || [];
+  UI.updateSplitSummary("editSplitSummary", "editExpAmt", "editSplitRows", participants);
+}
+
+async function handleSaveExpense() {
+  if (!currentTripId || editingExpenseId === null) {
+    showNotification("No expense selected for editing", "error");
+    return;
+  }
+
+  const trip = state[currentTripId];
+  const description = document.getElementById("editExpDesc")?.value.trim();
+  const amount = parseFloat(document.getElementById("editExpAmt")?.value || "0");
+  const date = document.getElementById("editExpDate")?.value;
+  const payer_id = document.getElementById("editExpPayer")?.value;
+  const split_type = document.getElementById("editExpSplitType")?.value;
+  const category = document.getElementById("editExpCategory")?.value.trim();
+  const note = document.getElementById("editExpNote")?.value.trim();
+
+  if (!description || !amount || !date || !payer_id || !split_type) {
+    showNotification("Please fill all required fields", "error");
+    return;
+  }
+
+  const expenseData = {
+    description,
+    amount,
+    date,
+    payer_id,
+    split_type,
+    category,
+    note,
+    trip_id: currentTripId
+  };
+
+  const updated = await updateExpense(editingExpenseId, expenseData);
+  if (updated) {
+    const index = trip.expenses.findIndex(e => e.id === editingExpenseId);
+    if (index !== -1) {
+      trip.expenses[index] = { ...trip.expenses[index], ...expenseData };
+      refreshUI();
+      closeEditExpenseModal();
+    }
+  }
+}
+
+function closeEditExpenseModal() {
+  const modal = document.getElementById("editExpenseModal");
+  if (modal) modal.style.display = "none";
+  editingExpenseId = null;
+}
+
 
 // Start the app
 init();
+
 
 
 
