@@ -9,7 +9,7 @@ console.log("Imported loadUserData from database.js:", loadUserData);
 // Global state
 let currentUser = null;
 let currentTripId = null;
-let window.editingExpenseId = null;
+window.editingExpenseId = null;
 let state = {
   trips: [],
   participants: {},
@@ -388,6 +388,7 @@ window.refreshUI = refreshUI;
 
 // Start the app
 init();
+
 
 
 
