@@ -25,7 +25,13 @@ export function refreshParticipantsUI(participants, containerId = "participantsL
         <i class="fas fa-times"></i>
       </button>
     `;
-    item.querySelector("button").onclick = () => removeParticipant(p.id);
+    item.querySelector("button").onclick = () => {
+  if (!p.id) {
+    console.warn("Participant ID is missing");
+    return;
+  }
+  removeParticipant(p.id);
+};
     ul.appendChild(item);
 
     const opt = document.createElement("option");
@@ -38,4 +44,5 @@ export function refreshParticipantsUI(participants, containerId = "participantsL
     editOpt.textContent = p.name;
     editPayerSel.appendChild(editOpt);
   });
+
 }
