@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Trip Splitter (Supabase)</title>
+  
+  <!-- Supabase SDK -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Styles -->
+  <link rel="stylesheet" href="styles/utilities/variables.css">
+  <link rel="stylesheet" href="styles/utilities/helpers.css">
+  <link rel="stylesheet" href="styles/components/cards.css">
+  <link rel="stylesheet" href="styles/components/forms.css">
+  <link rel="stylesheet" href="styles/components/modals.css">
+  <link rel="stylesheet" href="styles/components/notifications.css">
+  <link rel="stylesheet" href="styles/main.css">
+</head>
+<body>
+  <header>
+    <div class="header-content">
+      <div class="logo">
+        <i class="fas fa-receipt"></i>
+        <span>Trip Splitter</span>
+      </div>
+      <button id="logoutBtn" class="btn-sm danger" style="display: none;">
+        <i class="fas fa-sign-out-alt"></i> Logout
+      </button>
+    </div>
+  </header>
+
+  <div class="container">
+    <!-- Login Section -->
+    <div id="loginSection" class="login-form">
+      <h2><i class="fas fa-sign-in-alt"></i> Login to Trip Splitter</h2>
+      <input type="email" id="loginEmail" placeholder="Email" />
+      <input type="password" id="loginPassword" placeholder="Password" />
+      <button id="loginBtn" class="success"><i class="fas fa-sign-in-alt"></i> Login</button>
+      <p class="muted" style="text-align: center; margin-top: 15px;">
+        Don't have an account? <a href="#" id="showRegister">Register</a>
+      </p>
+    </div>
+
+    <!-- Register Section -->
+    <div id="registerSection" class="login-form" style="display: none;">
+      <h2><i class="fas fa-user-plus"></i> Create Account</h2>
+      <input type="text" id="registerName" placeholder="Full Name" />
+      <input type="email" id="registerEmail" placeholder="Email" />
+      <input type="password" id="registerPassword" placeholder="Password" />
+      <button id="registerBtn" class="success"><i class="fas fa-user-plus"></i> Register</button>
+      <p class="muted" style="text-align: center; margin-top: 15px;">
+        Already have an account? <a href="#" id="showLogin">Login</a>
+      </p>
+    </div>
+
+    <!-- Main App Content -->
+    <div id="appContent" style="display: none;">
+      <!-- Trip selector -->
+      <div class="trip-selector">
+        <select id="tripSelect"></select>
+        <button id="deleteTripBtn" class="btn-sm danger"><i class="fas fa-trash"></i> Delete</button>
+      </div>
+
+      <!-- Navigation tabs -->
+      <div class="section-tabs">
+        <div class="tab-btn active" data-tab="overview"><i class="fas fa-chart-pie"></i> Overview</div>
+        <div class="tab-btn" data-tab="trips"><i class="fas fa-suitcase"></i> My Trips</div>
+        <div class="tab-btn" data-tab="expenses"><i class="fas fa-money-bill-wave"></i> Expenses</div>
+        <div class="tab-btn" data-tab="participants"><i class="fas fa-users"></i> People</div>
+        <div class="tab-btn" data-tab="balances"><i class="fas fa-scale-balanced"></i> Balances</div>
+      </div>
+
+      <!-- Tab contents -->
+      <div id="overview-tab" class="tab-content active">
+        <!-- Overview content -->
+      </div>
+
+      <div id="trips-tab" class="tab-content">
+        <!-- Trips content -->
+      </div>
+
+      <div id="expenses-tab" class="tab-content">
+        <!-- Expenses content -->
+      </div>
+
+      <div id="participants-tab" class="tab-content">
+        <!-- Participants content -->
+      </div>
+
+      <div id="balances-tab" class="tab-content">
+        <!-- Balances content -->
+      </div>
+    </div>
+  </div>
+
+  <!-- Edit Expense Modal -->
+  <div id="editExpenseModal" class="modal">
+    <!-- Modal content -->
+  </div>
+
+  <!-- Notification element -->
+  <div id="notification" class="notification">
+    <i class="fas fa-check-circle"></i>
+    <div class="notification-content">Operation completed successfully</div>
+  </div>
+
+  <!-- Scripts -->
+  <script type="module" src="scripts/utilities.js"></script>
+  <script type="module" src="scripts/auth.js"></script>
+  <script type="module" src="scripts/database.js"></script>
+  <script type="module" src="scripts/components/expenses.js"></script>
+  <script type="module" src="scripts/components/participants.js"></script>
+  <script type="module" src="scripts/components/trips.js"></script>
+  <script type="module" src="scripts/components/settlements.js"></script>
+  <script type="module" src="scripts/ui.js"></script>
+  <script type="module" src="scripts/app.js"></script>
+</body>
+</html>
